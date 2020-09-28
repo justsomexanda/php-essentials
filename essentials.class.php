@@ -2,34 +2,39 @@
 
 class Essentials
 {
-    private static function alterEach(&$item1, $key){ /* noInject each array item */ */ $item1 = self::noInject($item1,'A');}
+    private static function alterEach(&$item1, $key){
+        /* noInject each array item to each depth*/ 
+        if(gettype($item1) === 'array'){$item1 = json_decode(self::noInject(json_encode($item1)),true);}
+        else {$item1 = self::noInject($item1);}
+    }
 
     public static function noInject($usertext,$arg1 = null)
     {
-        if(!isset($arg1))
-        {
-            $isjson = self::isJson($usertext);
-        }
+        /* Setbool isJson for further processing*/
+        if(!isset($arg1)){$isjson = self::isJson($usertext);}
         
         if(isset($isjson) && $isjson === true && !isset($arg1)){
             $jdtext = json_decode($usertext,true);
 
             array_walk($jdtext, array(__CLASS__,'alterEach'));
+            $jdtext =  json_encode($jdtext);
+            $jdtext = str_replace('&amp;','&',$jdtext);
+            return $jdtext;
         }else {
             $usertext = self::entities($usertext);
             $usertext = str_replace('\\','&bsol;',$usertext);
+
+            $usertext = htmlentities($usertext);
+            $usertext = str_replace('&amp;','&',$usertext);
+            return $usertext;
         }
-        if(!isset($arg1))
-        return $usertext;
     }
 
     private static function entities( $string ) {
         $stringBuilder = "";
         $offset = 0;
 
-        if ( empty( $string ) ) {
-            return "";
-        }
+        if ( empty( $string ) ) {return "";}
 
         while ( $offset >= 0 ) {
             $decValue = self::ordutf8( $string, $offset );
@@ -44,7 +49,6 @@ class Essentials
                 $stringBuilder .= $char;
             }
         }
-
         return $stringBuilder;
     }
 

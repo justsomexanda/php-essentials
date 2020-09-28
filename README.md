@@ -6,7 +6,7 @@ This is a static class I use for every project, thats why I called it essentials
 Takes a **string** or a **json** and escapes critical characters. If a json is given it does the same, but only for each item and unlimited depth.
 
 ``` 
-  echo Essentials::noInject("I'm a <critical> string")
+  echo Essentials::noInject("I'm a <critical> string");
   //Output: I\'m a &lt;critical&gt; string
   //Output as HTML: I'm a <critical> string
 ```
@@ -15,7 +15,7 @@ Takes a **string** or a **json** and escapes critical characters. If a json is g
 Gets the current public user IP-address
 
 ``` 
-  echo Essentials::getUserIpAddr()
+  echo Essentials::getUserIpAddr();
   //Output: 17.239.209.218
 ```
 
@@ -23,6 +23,37 @@ Gets the current public user IP-address
 Takes a string and checks if it is a json. Returns a bool
 
 ``` 
-  echo Essentials::isJson("Hello world!")
+  echo Essentials::isJson("Hello world!");
   //Output: false
 ```
+
+#SQL
+This is my sql-class which requires essentials.class.php
+
+## Public functions
+### construct
+Requires (server,user,password,database) for instantiation
+
+``` 
+  $sql = new Sql('localhost','user','somethingsafeprobably','database');
+```
+
+### read
+Query a table and/or return a $column from $where $is
+
+``` 
+  //Query a table for later (faster) use. This line is optional
+  $sql->read('persons');
+  
+  //Return column
+  echo $sql->read('persons','name','uid','a6a2f5842');
+  //Output: ["Alexander","Blasl"]
+```
+
+### update
+Update an existing column (table,col,where,is,newdata)
+
+``` 
+  $sql->update("persons","name","uid","a6a2f5842","[\"Benjamin\",\"Buttons\"]");
+```
+

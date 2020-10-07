@@ -16,18 +16,31 @@ class Essentials
         if(isset($isjson) && $isjson === true && !isset($arg1)){
             $jdtext = json_decode($usertext,true);
 
-            array_walk($jdtext, array(__CLASS__,'alterEach'));
-            $jdtext =  json_encode($jdtext);
-            $jdtext = str_replace('&amp;','&',$jdtext);
+            if(gettype($jdtext) === "array"){
+                array_walk($jdtext, array(__CLASS__,'alterEach'));
+                $jdtext =  json_encode($jdtext);
+                $jdtext = str_replace('&amp;','&',$jdtext);
+            }else {
+                $jdtext = self::noInject($jdtext);
+            }
             return $jdtext;
-        }else {
-            $usertext = self::entities($usertext);
+        }elseif(!is_numeric($usertext)) {
             $usertext = str_replace('\\','&bsol;',$usertext);
+            $usertext = str_replace("'",'&#39;',$usertext);
+            $usertext = str_replace('`','&#96;',$usertext);
+            $usertext = str_replace('/','&#47;',$usertext);
 
-            $usertext = htmlentities($usertext);
+            $usertext = self::entities($usertext);
+            $usertext = htmlentities($usertext,ENT_HTML401);
+
+            $usertext = str_replace(' ','&nbsp;',$usertext);
+            $usertext = str_replace('&amp;amp;','&',$usertext);
             $usertext = str_replace('&amp;','&',$usertext);
+            $usertext = str_replace('&amp;','&',$usertext);
+
             return $usertext;
         }
+        return $usertext;
     }
 
     private static function entities( $string ) {

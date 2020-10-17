@@ -7,7 +7,7 @@ Takes a **string** or a **json** and escapes critical characters. If a json is g
 
 ``` 
   echo Essentials::noInject("I'm a <critical> string");
-  //Output: I\'m a &lt;critical&gt; string
+  //Output: I'm&nbsp;a&nbsp;&lt;critical&gt;&nbsp;string
   //Output as HTML: I'm a <critical> string
 ```
 

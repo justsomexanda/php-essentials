@@ -27,7 +27,15 @@ Takes a string and checks if it is a json. Returns a bool
   //Output: false
 ```
 
-#SQL
+### realBreak
+Detects a newline in different forms and returns either html or other newline-formats
+
+``` 
+  echo Essentials::realBreak("Hey <br> a \\n b \\r c");
+  //Output: Hey <br> a <br> b <br> c
+```
+
+# SQL
 This is my sql-class which requires essentials.class.php
 
 ## Public functions

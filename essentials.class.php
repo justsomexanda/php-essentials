@@ -2,7 +2,7 @@
 
 class Essentials
 {
-    private static function alterEach(&$item1, $key){
+    private static function alterEach(&$item1){
         /* noInject each array item to each depth*/ 
         if(gettype($item1) === 'array'){$item1 = json_decode(self::noInject(json_encode($item1)),true);}
         else {$item1 = self::noInject($item1);}
@@ -10,6 +10,9 @@ class Essentials
 
     public static function noInject($usertext,$arg1 = null)
     {
+        /* If nothing is given - return nothing */ 
+        if(!isset($usertext)){return null;}
+
         /* Setbool isJson for further processing*/
         if(!isset($arg1)){$isjson = self::isJson($usertext);}
         
@@ -29,9 +32,13 @@ class Essentials
             $usertext = str_replace("'",'&#39;',$usertext);
             $usertext = str_replace('`','&#96;',$usertext);
             $usertext = str_replace('/','&#47;',$usertext);
+            $usertext = str_replace('/', '&#47;', $usertext);
 
             $usertext = self::entities($usertext);
             $usertext = htmlentities($usertext,ENT_HTML401);
+
+            //New lines
+            $usertext = preg_replace('/\r\n/', '<br>', trim($usertext));
 
             $usertext = str_replace(' ','&nbsp;',$usertext);
             $usertext = str_replace('&amp;amp;','&',$usertext);
@@ -41,6 +48,12 @@ class Essentials
             return $usertext;
         }
         return $usertext;
+    }
+
+    public static function realWhitespace($str){
+        $str = str_replace('&nbsp;',' ',$str);
+        while(strpos($str,'&amp;')){$str = str_replace('&amp;','&',$str);}
+        return $str;
     }
 
     private static function entities( $string ) {
@@ -104,8 +117,66 @@ class Essentials
     }
 
     public static function isJson($string) {
-        json_decode($string);
-        return (json_last_error() == JSON_ERROR_NONE);
+        if(!is_numeric($string))
+        {
+            json_decode($string);
+            return (json_last_error() == JSON_ERROR_NONE);
+        }
+
+        return false;
+    }
+
+    public static function shortenString($str = "",$length)
+    {
+        return strlen($str) > $length ? substr($str,0,$length)."..." : $str;
+    }
+
+    public static function timep(){
+        return date("Y-m-d").'T'.date("H:i:s").'+02:00';
+    }
+
+    public static function validateAge($birthday, $age = 18)
+    {
+        // $birthday can be UNIX_TIMESTAMP or just a string-date.
+        if(is_string($birthday)) {
+            $birthday = strtotime($birthday);
+        }
+
+        // check
+        // 31536000 is the number of seconds in a 365 days year.
+        if(time() - $birthday < $age * 31536000)  {
+            return false;
+        }
+
+        return true;
+    }
+
+    public static function validateLength($string,$min,$max)
+    {
+        return (strlen($string) >= $min && strlen($string) <= $max) ? true : false;
+    }
+
+    public static function currentUrl()
+    {
+        $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        return $actual_link;
+    }
+
+    public static function realBreak($usertext = "",$nlorbr = false){
+        $usertext = self::noInject($usertext);
+        if($nlorbr) {
+            $usertext = str_replace('<br>', '&#10;', $usertext);
+            $usertext = str_replace('&lt;br&gt;', '&#10;', $usertext);
+            $usertext = str_replace('&bsol;r&bsol;n', '&#10;', $usertext);
+            $usertext = str_replace('&bsol;n', '&#10;', $usertext);
+            $usertext = str_replace('&bsol;r', '&#10;', $usertext);
+        }else{
+            $usertext = str_replace('&lt;br&gt;', '<br>', $usertext);
+            $usertext = str_replace('&bsol;r&bsol;n', '<br>', $usertext);
+            $usertext = str_replace('&bsol;n', '<br>', $usertext);
+            $usertext = str_replace('&bsol;r', '<br>', $usertext);
+        }
+        return $usertext;
     }
 }
 

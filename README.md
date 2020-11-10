@@ -35,6 +35,14 @@ Detects a newline in different forms and returns either html or other newline-fo
   //Output: Hey <br> a <br> b <br> c
 ```
 
+### progress_bar
+Prints a simple progressbar. I added this code from: https://gist.github.com/mayconbordin/2860547
+
+``` 
+  echo Essentials::progress_bar(10, 100, "Downloading wordpress", 10);
+  //Output: 10%[=>         ]Downloading wordpress
+```
+
 # SQL
 This is my sql-class which requires essentials.class.php
 

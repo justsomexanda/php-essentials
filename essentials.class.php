@@ -119,7 +119,7 @@ class Essentials
     public static function isJson($string) {
         if(!is_numeric($string))
         {
-            json_decode($string);
+            @json_decode($string);
             return (json_last_error() == JSON_ERROR_NONE);
         }
 

@@ -189,6 +189,37 @@ class Essentials
     public static function command_exist($cmd) {
         return !empty(shell_exec("which $cmd 2>/dev/null"));
     }
+    
+    public static function uid($length = 32,$call = 0) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    public static function pingDomain($domain)
+    {
+        try {
+            //code...
+            $starttime = microtime(true);
+            $file      = fsockopen($domain, 80, $errno, $errstr, 10);
+            $stoptime  = microtime(true);
+            $status    = 0;
+    
+            if (!$file) $status = -1;  // Site is down
+            else {
+                fclose($file);
+                $status = ($stoptime - $starttime) * 1000;
+                $status = floor($status);
+            }
+        } catch (\Throwable $th) {
+            return false;
+        }
+        return $status;
+    }
 }
 
 ?>
